@@ -37,3 +37,27 @@ Added the four destinations and applied the shared theme. Learn has region selec
 Added injectable AI, directory and location repository interfaces. The assistant retrieves excerpts from local lessons and links each supported answer to its lesson. It can ask for clarification, decline unsupported prompts, show loading and failures, and retry. Play has separate venue and coach views, a schematic demo map, distance and sport filters, a searchable area picker and venue and coach detail pages. Fictional listings are labelled at each entry point. Missing contact, fee, opening and verification data is shown as unavailable. Directions require a verified address. Reports are stored locally.
 
 The MIT-licensed `geolocator` plugin requests approximate foreground Android location only after the user selects Use my location. The app compares it to the eleven demo city centres locally within 150 km, then discards the coordinates. Permission denial, disabled services and lack of coverage leave manual search available. Profile includes local saved items, theme and text settings, RTL preview, language status, privacy and data-source information. [Android location package](https://pub.dev/packages/geolocator)
+
+## Phase 4 courses and onboarding
+
+Replaced the original combined screen with separate sport overviews, lessons, practice checklists, quizzes and results. Lessons have a source, game format, bookmark and link into the lesson assistant. First-run onboarding saves a preferred city, sport and level together, and existing progress remains readable. The assistant, directory and catalogue screens show meaningful loading, empty, failure and offline states. Offline catalogue failures fall back to the bundled lessons. Static course content is available offline, and progress and onboarding writes display local errors when applicable.
+
+## Verification results
+
+Each phase passed Dart formatting, Flutter analysis, its available test suite and a debug APK build. The phase test counts were 4, 7, 7, 10 and 42. The final suite covers the 24 combinations of 360×800, 412×915 and 720×1280 with light and dark, 100% and 200% text, and LTR and RTL. It opens and scrolls each tab and compares four reference images. The Android debug APK installed and opened to onboarding on the Pixel 7 emulator. Location denial is covered with an injected test provider. The reference images were generated on Windows with Flutter 3.47.9.
+
+## Scope decisions and follow-up
+
+- AI replies and the directory are local demos. Production AI, real venue or coach feeds, verified addresses, and server-side report delivery require the secure backend. The schematic map provides no live routing.
+- The content is English. RTL preview validates mirrored layout, and Arabic and Devanagari glyphs are available locally for future translations. The translated lesson catalogues and interfaces are still future work.
+- The twelve courses are introductory educational guides. The directory has one representative city per target country and no claimed business hours, fees or contact details.
+
+## AI assistance file log
+
+- App entry and state: `lib/main.dart`, `lib/app_state.dart`, `lib/repositories.dart`.
+- Bundled content: `lib/data.dart`, `lib/course_catalog.dart`.
+- Shared UI: `lib/ui/strings.dart`, `lib/ui/theme/app_theme.dart`, `lib/ui/widgets/components.dart`, `lib/ui/widgets/region_picker.dart`.
+- Screens: `lib/ui/screens/learn.dart`, `ask.dart`, `play.dart`, `profile.dart`, `course.dart`, `onboarding.dart`. These replaced the legacy `lib/design.dart` and `lib/screens.dart`.
+- Android, dependencies and fonts: `android/app/src/main/AndroidManifest.xml`, `pubspec.yaml`, `pubspec.lock`, and the four licensed font families and notices in `assets/fonts/`.
+- Verification: `test/app_test.dart`, `test/design_test.dart`, `test/flows_test.dart`, `test/states_test.dart`, `test/layout_test.dart`, and the four screen goldens under `test/goldens/`.
+- Documentation: `DESIGN.md`, `README.md` and `docs/redesign-notes.md`.

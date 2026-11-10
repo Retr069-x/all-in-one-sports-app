@@ -10,6 +10,7 @@ import '../strings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/components.dart';
 import 'play.dart';
+import 'onboarding.dart' show playerLevelName;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -56,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!await result && mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text(Copy.saveError)));
+      ).showSnackBar(const SnackBar(content: AppText(Copy.saveError)));
     }
   }
 
@@ -64,11 +65,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final selected = await showDialog<ThemeMode>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text(Copy.appearance),
+        title: const AppText(Copy.appearance),
         children: [
           for (final mode in ThemeMode.values)
             ListTile(
-              title: Text(_themeName(mode)),
+              title: AppText(_themeName(mode)),
               minTileHeight: 48,
               selected: mode == state.themeMode,
               onTap: () => Navigator.pop(context, mode),
@@ -84,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         scrollable: true,
-        title: Text(title),
+        title: AppText(title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,16 +101,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 } on Exception {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text(Copy.locationUnavailable)),
+                      const SnackBar(
+                        content: AppText(Copy.locationUnavailable),
+                      ),
                     );
                   }
                 }
               },
-              child: const Text(Copy.openSettings),
+              child: const AppText(Copy.openSettings),
             ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(Copy.close),
+            child: const AppText(Copy.close),
           ),
         ],
       ),
@@ -149,13 +152,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   value: state.completedCount / state.totalLessons,
                   label: Copy.progress,
                 ),
-                Text(
+                AppText(
                   Copy.completed(
                     numbers.format(state.completedCount),
                     numbers.format(state.totalLessons),
                   ),
                 ),
-                if (state.completedCount == 0) const Text(Copy.progressEmpty),
+                if (state.completedCount == 0)
+                  const AppText(Copy.progressEmpty),
               ],
             ),
           ),
@@ -188,8 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ListTile(
                   minTileHeight: 48,
                   leading: const Icon(Symbols.menu_book),
-                  title: Text(lesson.title),
-                  subtitle: Text(sport.name),
+                  title: AppText(lesson.title),
+                  subtitle: AppText(sport.name),
                   onTap: () => widget.openLesson(sport, lesson),
                 ),
               ),
@@ -248,8 +252,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ListTile(
                 minTileHeight: 48,
                 leading: const Icon(Symbols.location_on),
-                title: const Text(Copy.selectCountry),
-                subtitle: Text(
+                title: const AppText(Copy.selectCountry),
+                subtitle: AppText(
                   Copy.place(state.region.city, state.region.country),
                 ),
                 onTap: widget.changeRegion,
@@ -257,56 +261,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ListTile(
                 minTileHeight: 48,
                 leading: const Icon(Symbols.language),
-                title: const Text(Copy.language),
-                subtitle: const Text(Copy.english),
+                title: const AppText(Copy.language),
+                subtitle: const AppText(Copy.english),
                 onTap: () => _info(Copy.language, [
-                  const Text(Copy.english),
-                  const Text(Copy.languagesPlanned),
+                  const AppText(Copy.english),
+                  const AppText(Copy.languagesPlanned),
                 ]),
               ),
               ListTile(
                 minTileHeight: 48,
                 leading: const Icon(Symbols.contrast),
-                title: const Text(Copy.appearance),
-                subtitle: Text(_themeName(state.themeMode)),
+                title: const AppText(Copy.appearance),
+                subtitle: AppText(_themeName(state.themeMode)),
                 onTap: _appearance,
               ),
               SwitchListTile(
-                title: const Text(Copy.rtlPreview),
-                subtitle: const Text(Copy.rtlHelp),
+                title: const AppText(Copy.rtlPreview),
+                subtitle: const AppText(Copy.rtlHelp),
                 value: state.rtl,
                 onChanged: (value) => _apply(state.setRtl(value)),
               ),
               SwitchListTile(
-                title: const Text(Copy.largerText),
-                subtitle: const Text(Copy.largerHelp),
+                title: const AppText(Copy.largerText),
+                subtitle: const AppText(Copy.largerHelp),
                 value: state.largeText,
                 onChanged: (value) => _apply(state.setLargeText(value)),
               ),
               ListTile(
                 minTileHeight: 48,
                 leading: const Icon(Symbols.my_location),
-                title: const Text(Copy.locationPermission),
+                title: const AppText(Copy.locationPermission),
                 onTap: () => _info(Copy.locationPermission, [
-                  const Text(Copy.locationPrivacy),
+                  const AppText(Copy.locationPrivacy),
                 ], location: true),
               ),
               ListTile(
                 minTileHeight: 48,
                 leading: const Icon(Symbols.info),
-                title: const Text(Copy.privacy),
+                title: const AppText(Copy.privacy),
                 onTap: () => _info(Copy.privacy, [
-                  const Text(Copy.privacyDetail),
+                  const AppText(Copy.privacyDetail),
                   const SectionHeader(
                     Copy.dataSources,
                     detail: Copy.dataSourcesDetail,
                   ),
-                  const Text(Copy.askNote),
+                  const AppText(Copy.askNote),
                 ]),
               ),
             ],
           ),
         ),
+        if (state.playingLevel case final level?)
+          ListTile(
+            minTileHeight: 48,
+            leading: const Icon(Symbols.sports),
+            title: const AppText(Copy.playLevel),
+            subtitle: AppText(playerLevelName(level)),
+          ),
       ],
     );
   }

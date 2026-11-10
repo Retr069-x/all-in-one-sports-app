@@ -7,7 +7,7 @@ import 'package:sportconnect/ui/screens/learn.dart';
 import 'package:sportconnect/ui/strings.dart';
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() => SharedPreferences.setMockInitialValues({'ui-onboarded': true}));
 
   test('all eleven sample rankings refer to the twelve-sport catalogue', () {
     final ids = sports.map((sport) => sport.id).toSet();
@@ -24,12 +24,15 @@ void main() {
   ) async {
     final preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(SportConnect(preferences: preferences));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(Copy.startCourse));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('1. Aim of the game'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Mark complete'));
+    await tester.pumpAndSettle();
+    await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.text('1 of 5 lessons complete'), findsOneWidget);
     expect(preferences.getStringList('completed-football'), ['aim']);
@@ -46,6 +49,7 @@ void main() {
   ) async {
     final preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(SportConnect(preferences: preferences));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Karachi'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Canada'));
@@ -79,17 +83,23 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     final preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(SportConnect(preferences: preferences));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(Copy.startCourse));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.text('The heel'), 220);
+    await tester.scrollUntilVisible(find.text(Copy.quiz), 180);
+    await tester.tap(find.text(Copy.quiz));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('The heel'));
+    await tester.pump();
+    await tester.tap(find.text(Copy.checkAnswer));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.textContaining('Try again.'), 100);
-    expect(find.textContaining('Try again.'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('The inside'), -100);
+    expect(find.text(Copy.revisitAnswer), findsOneWidget);
+    await tester.tap(find.text(Copy.retry));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('The inside'));
+    await tester.pump();
+    await tester.tap(find.text(Copy.checkAnswer));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.textContaining('Correct.'), 100);
-    expect(find.textContaining('Correct.'), findsOneWidget);
+    expect(find.text(Copy.correctAnswer), findsOneWidget);
   });
 }

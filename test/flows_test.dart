@@ -33,7 +33,7 @@ Finder _destination(String label) =>
     find.widgetWithText(NavigationDestination, label);
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() => SharedPreferences.setMockInitialValues({'ui-onboarded': true}));
 
   test(
     'demo answers are sourced and can decline unsupported questions',
@@ -98,6 +98,16 @@ void main() {
         scrollable: chatScroll,
       );
       expect(find.text(Copy.aiOffline), findsOneWidget);
+      await tester.tap(find.text(Copy.retry));
+      await tester.pump();
+      ai.requests.last.completeError(Exception('Demo assistant failure'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text(Copy.retry),
+        100,
+        scrollable: chatScroll,
+      );
+      expect(find.text(Copy.aiError), findsOneWidget);
       await tester.tap(find.text(Copy.retry));
       await tester.pump();
       final lesson = sports.first.lessons[1];

@@ -78,17 +78,17 @@ class _PlayScreenState extends State<PlayScreen> {
     final selected = await showDialog<(Sport?,)>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text(Copy.selectSport),
+        title: const AppText(Copy.selectSport),
         children: [
           ListTile(
             minTileHeight: 48,
-            title: const Text(Copy.allSports),
+            title: const AppText(Copy.allSports),
             onTap: () => Navigator.pop(context, (null,)),
           ),
           for (final item in sports)
             ListTile(
               minTileHeight: 48,
-              title: Text(item.name),
+              title: AppText(item.name),
               onTap: () => Navigator.pop(context, (item,)),
             ),
         ],
@@ -102,12 +102,12 @@ class _PlayScreenState extends State<PlayScreen> {
     final selected = await showDialog<(double?,)>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text(Copy.distance),
+        title: const AppText(Copy.distance),
         children: [
           for (final item in <double?>[null, 2, 5, 10, 20])
             ListTile(
               minTileHeight: 48,
-              title: Text(
+              title: AppText(
                 item == null
                     ? Copy.anyDistance
                     : Copy.maxDistance(numbers.format(item)),
@@ -152,12 +152,12 @@ class _PlayScreenState extends State<PlayScreen> {
             OutlinedButton.icon(
               onPressed: widget.changeRegion,
               icon: const Icon(Symbols.search),
-              label: const Text(Copy.searchArea),
+              label: const AppText(Copy.searchArea),
             ),
             OutlinedButton.icon(
               onPressed: locating ? null : useLocation,
               icon: const Icon(Symbols.my_location),
-              label: const Text(Copy.useLocation),
+              label: const AppText(Copy.useLocation),
             ),
           ],
         ),
@@ -174,11 +174,11 @@ class _PlayScreenState extends State<PlayScreen> {
           segments: const [
             ButtonSegment(
               value: DirectoryKind.venues,
-              label: Text(Copy.venues),
+              label: AppText(Copy.venues),
             ),
             ButtonSegment(
               value: DirectoryKind.coaches,
-              label: Text(Copy.coaches),
+              label: AppText(Copy.coaches),
             ),
           ],
           selected: {kind},
@@ -192,13 +192,13 @@ class _PlayScreenState extends State<PlayScreen> {
             OutlinedButton.icon(
               onPressed: sportFilter,
               icon: const Icon(Symbols.tune, size: 18),
-              label: Text(sport?.name ?? Copy.allSports),
+              label: AppText(sport?.name ?? Copy.allSports),
             ),
             if (kind == DirectoryKind.venues)
               OutlinedButton.icon(
                 onPressed: distanceFilter,
                 icon: const Icon(Symbols.route, size: 18),
-                label: Text(
+                label: AppText(
                   distance == null
                       ? Copy.anyDistance
                       : Copy.maxDistance(
@@ -215,7 +215,7 @@ class _PlayScreenState extends State<PlayScreen> {
               icon: Icon(
                 view == DirectoryView.list ? Symbols.map : Symbols.list,
               ),
-              label: Text(view == DirectoryView.list ? Copy.map : Copy.list),
+              label: AppText(view == DirectoryView.list ? Copy.map : Copy.list),
             ),
           ],
         ),
@@ -372,7 +372,7 @@ class _DemoMap extends StatelessWidget {
             ),
           ),
           for (final pin in pins)
-            TextButton(onPressed: pin.open, child: Text(pin.label)),
+            TextButton(onPressed: pin.open, child: AppText(pin.label)),
         ],
       ),
     ),
@@ -409,7 +409,7 @@ class ListingScreen extends StatelessWidget {
     final saved = await state.report(id, message);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(saved ? Copy.reportSaved : Copy.saveError)),
+        SnackBar(content: AppText(saved ? Copy.reportSaved : Copy.saveError)),
       );
     }
   }
@@ -419,7 +419,7 @@ class ListingScreen extends StatelessWidget {
     final venue = _venue;
     final region = venue?.region ?? _coach!.region;
     return Scaffold(
-      appBar: AppBar(title: Text(venue == null ? Copy.coach : Copy.venue)),
+      appBar: AppBar(title: AppText(venue == null ? Copy.coach : Copy.venue)),
       body: ListenableBuilder(
         listenable: state,
         builder: (context, child) => ContentList(
@@ -446,9 +446,9 @@ class ListingScreen extends StatelessWidget {
                         in venue == null
                             ? coachSummary(_coach!)
                             : venueSummary(venue))
-                      Text(field),
+                      AppText(field),
                     if (venue != null)
-                      Text(
+                      AppText(
                         Copy.field(
                           Copy.address,
                           venue.address ?? Copy.notProvided,
@@ -469,13 +469,13 @@ class ListingScreen extends StatelessWidget {
                         ? Symbols.bookmark_remove
                         : Symbols.bookmark_add,
                   ),
-                  label: Text(
+                  label: AppText(
                     state.isSaved(kind, id) ? Copy.removeSaved : Copy.save,
                   ),
                   onPressed: () async {
                     if (!await state.toggleSaved(kind, id) && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text(Copy.saveError)),
+                        const SnackBar(content: AppText(Copy.saveError)),
                       );
                     }
                   },
@@ -485,21 +485,21 @@ class ListingScreen extends StatelessWidget {
                     onPressed: () => showDialog<void>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text(Copy.directions),
-                        content: const Text(Copy.directionsDemo),
+                        title: const AppText(Copy.directions),
+                        content: const AppText(Copy.directionsDemo),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text(Copy.close),
+                            child: const AppText(Copy.close),
                           ),
                         ],
                       ),
                     ),
-                    child: const Text(Copy.directions),
+                    child: const AppText(Copy.directions),
                   ),
                   OutlinedButton(
                     onPressed: () => _report(context),
-                    child: const Text(Copy.report),
+                    child: const AppText(Copy.report),
                   ),
                 ],
               ],
@@ -528,12 +528,12 @@ class _ReportDialogState extends State<_ReportDialog> {
   @override
   Widget build(BuildContext context) => AlertDialog(
     scrollable: true,
-    title: const Text(Copy.report),
+    title: const AppText(Copy.report),
     content: Column(
       mainAxisSize: MainAxisSize.min,
       spacing: Space.x2,
       children: [
-        const Text(Copy.reportNote),
+        const AppText(Copy.reportNote),
         TextField(
           controller: message,
           maxLength: 320,
@@ -546,13 +546,13 @@ class _ReportDialogState extends State<_ReportDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text(Copy.cancel),
+        child: const AppText(Copy.cancel),
       ),
       FilledButton(
         onPressed: message.text.trim().isEmpty
             ? null
             : () => Navigator.pop(context, message.text.trim()),
-        child: const Text(Copy.save),
+        child: const AppText(Copy.save),
       ),
     ],
   );

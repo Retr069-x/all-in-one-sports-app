@@ -8,6 +8,16 @@ class OfflineFailure implements Exception {
   const OfflineFailure();
 }
 
+abstract interface class LearningRepository {
+  Future<List<Sport>> load();
+}
+
+class BundledLearningRepository implements LearningRepository {
+  const BundledLearningRepository();
+  @override
+  Future<List<Sport>> load() async => sports;
+}
+
 enum AiOutcome { answer, clarification, insufficient }
 
 class AiReply {

@@ -59,8 +59,8 @@ class _RegionPickerState extends State<_RegionPicker> {
           const StatusBanner(ContentState.empty, detail: Copy.regionHelp),
         for (final region in matches)
           ListTile(
-            title: Text(region.country),
-            subtitle: Text(region.city),
+            title: AppText(region.country),
+            subtitle: AppText(region.city),
             minTileHeight: 48,
             selected: region == widget.current,
             trailing: region == widget.current

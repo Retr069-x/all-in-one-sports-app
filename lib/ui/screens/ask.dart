@@ -146,7 +146,7 @@ class _AskScreenState extends State<AskScreen> {
               children: [
                 for (final item in sports)
                   ChoiceChip(
-                    label: Text(item.name),
+                    label: AppText(item.name),
                     selected: item == sport,
                     onSelected: (_) => setState(() {
                       sport = item;
@@ -168,7 +168,7 @@ class _AskScreenState extends State<AskScreen> {
                     onPressed: pending == null
                         ? () => send(_Turn(sport, question, lesson))
                         : null,
-                    child: Text(question),
+                    child: AppText(question),
                   ),
               ],
             ),
@@ -208,7 +208,7 @@ class _AskScreenState extends State<AskScreen> {
                 ),
             ],
             const SizedBox(height: Space.x4),
-            Text(Copy.askNote, style: Theme.of(context).textTheme.bodySmall),
+            AppText(Copy.askNote, style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ),
@@ -273,11 +273,11 @@ class _Message extends StatelessWidget {
             spacing: Space.x2,
             runSpacing: Space.x1,
             children: [
-              Text(title, style: Theme.of(context).textTheme.titleSmall),
+              AppText(title, style: Theme.of(context).textTheme.titleSmall),
               if (demo) const DemoDataBadge(),
             ],
           ),
-          Text(text),
+          AppText(text),
           if (sources.isNotEmpty)
             Wrap(spacing: Space.x2, runSpacing: Space.x1, children: sources),
         ],

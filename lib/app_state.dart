@@ -5,13 +5,53 @@ import 'data.dart';
 
 enum SavedKind { lesson, venue, coach }
 
+enum PlayerLevel { beginner, recreational, returning }
+
 class AppState extends ChangeNotifier {
   AppState(this.preferences);
 
   final SharedPreferences preferences;
 
+  List<String> get _setup => preferences.getStringList('ui-onboarding') ?? [];
+
+  bool get needsOnboarding =>
+      _setup.isEmpty &&
+      preferences.getBool('ui-onboarded') != true &&
+      !preferences.containsKey('country') &&
+      completedCount == 0;
+
+  Sport get starterSport {
+    final setup = _setup;
+    return sports.firstWhere(
+      (sport) => setup.length > 1 && sport.id == setup[1],
+      orElse: () => sports.first,
+    );
+  }
+
+  PlayerLevel? get playingLevel {
+    final setup = _setup;
+    return setup.length > 2
+        ? PlayerLevel.values
+              .where((level) => level.name == setup[2])
+              .firstOrNull
+        : null;
+  }
+
+  Future<bool> finishOnboarding(
+    Region region,
+    Sport sport,
+    PlayerLevel level,
+  ) => _write(
+    () => preferences.setStringList('ui-onboarding', [
+      region.code,
+      sport.id,
+      level.name,
+    ]),
+  );
+
   Region get region => regions.firstWhere(
-    (item) => item.code == preferences.getString('country'),
+    (item) =>
+        item.code == (preferences.getString('country') ?? _setup.firstOrNull),
     orElse: () => regions.first,
   );
 
@@ -72,7 +112,12 @@ class AppState extends ChangeNotifier {
   Future<bool> setLargeText(bool value) =>
       _write(() => preferences.setBool('ui-large-text', value));
 
-  void refresh() => notifyListeners();
+  Future<bool> complete(Sport sport, Lesson lesson) => _write(
+    () => preferences.setStringList(
+      'completed-${sport.id}',
+      {...completed(sport), lesson.id}.toList(),
+    ),
+  );
 
   Future<bool> _write(Future<bool> Function() action) async {
     try {

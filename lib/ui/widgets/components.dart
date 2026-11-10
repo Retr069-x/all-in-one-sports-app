@@ -1,9 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../strings.dart';
 import '../theme/app_theme.dart';
+
+class AppText extends StatelessWidget {
+  const AppText(this.data, {super.key, this.style});
+
+  final String data;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final layout = Directionality.of(context);
+    final content = Localizations.localeOf(context).languageCode == 'en'
+        ? TextDirection.ltr
+        : layout;
+    return Text(
+      data,
+      style: style,
+      textDirection: content,
+      textAlign: content == layout ? TextAlign.start : TextAlign.end,
+    );
+  }
+}
+
+PageRoute<void> appRoute(BuildContext context, WidgetBuilder buildPage) {
+  final duration = MediaQuery.disableAnimationsOf(context)
+      ? Duration.zero
+      : motionDuration;
+  return PageRouteBuilder<void>(
+    transitionDuration: duration,
+    reverseTransitionDuration: duration,
+    pageBuilder: (context, animation, secondary) => buildPage(context),
+    transitionsBuilder: (context, animation, secondary, child) =>
+        FadeTransition(opacity: animation, child: child),
+  );
+}
 
 class ContentList extends StatelessWidget {
   const ContentList({super.key, required this.children, this.controller});
@@ -50,7 +84,7 @@ class SectionHeader extends StatelessWidget {
       children: [
         Semantics(
           header: true,
-          child: Text(
+          child: AppText(
             title,
             style: prominent
                 ? theme.textTheme.headlineLarge
@@ -58,7 +92,7 @@ class SectionHeader extends StatelessWidget {
           ),
         ),
         if (detail case final value?)
-          Text(
+          AppText(
             value,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -128,11 +162,11 @@ class SportTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: Space.x1,
       children: [
-        Text(
+        AppText(
           name,
           style: theme.textTheme.titleMedium?.copyWith(color: tone.onContainer),
         ),
-        Text(
+        AppText(
           detail,
           style: theme.textTheme.bodySmall?.copyWith(color: tone.onContainer),
         ),
@@ -203,22 +237,25 @@ class CourseCard extends StatelessWidget {
           spacing: Space.x3,
           children: [
             ?trailing,
-            Text(
+            AppText(
               eyebrow,
               style: text.labelMedium?.copyWith(color: lime, letterSpacing: 1),
             ),
-            Text(
+            AppText(
               title,
               style: text.headlineMedium?.copyWith(color: Colors.white),
             ),
-            Text(detail, style: text.bodyMedium?.copyWith(color: Colors.white)),
+            AppText(
+              detail,
+              style: text.bodyMedium?.copyWith(color: Colors.white),
+            ),
             FilledButton(
               onPressed: onTap,
               style: FilledButton.styleFrom(
                 backgroundColor: lime,
                 foregroundColor: ink,
               ),
-              child: Text(action),
+              child: AppText(action),
             ),
           ],
         ),
@@ -275,7 +312,7 @@ class ProgressRing extends StatelessWidget {
                 ),
               ],
             ),
-            child: Text(
+            child: AppText(
               percent,
               style: theme.textTheme.labelLarge?.copyWith(
                 color: onDark ? Colors.white : theme.colorScheme.onSurface,
@@ -304,7 +341,7 @@ class DemoDataBadge extends StatelessWidget {
           horizontal: Space.x2,
           vertical: Space.x1,
         ),
-        child: Text(
+        child: AppText(
           Copy.demoData,
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.onTertiaryContainer,
@@ -325,7 +362,7 @@ class SourceChip extends StatelessWidget {
   Widget build(BuildContext context) => OutlinedButton.icon(
     onPressed: onTap,
     icon: const Icon(Symbols.menu_book, size: 18),
-    label: Text(label),
+    label: AppText(label),
   );
 }
 
@@ -359,10 +396,10 @@ class StatusBanner extends StatelessWidget {
                 const LinearProgressIndicator()
               else
                 Icon(icon),
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              if (detail case final value?) Text(value),
+              AppText(title, style: Theme.of(context).textTheme.titleMedium),
+              if (detail case final value?) AppText(value),
               if (onRetry case final retry?)
-                TextButton(onPressed: retry, child: const Text(Copy.retry)),
+                TextButton(onPressed: retry, child: const AppText(Copy.retry)),
             ],
           ),
         ),
@@ -474,8 +511,8 @@ class _DirectoryCard extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [Icon(icon), const DemoDataBadge()],
             ),
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            for (final detail in details) Text(detail),
+            AppText(title, style: Theme.of(context).textTheme.titleMedium),
+            for (final detail in details) AppText(detail),
           ],
         ),
       ),

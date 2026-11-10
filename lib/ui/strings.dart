@@ -146,6 +146,58 @@ abstract final class Copy {
   static const savedEmpty = 'Save a lesson, venue or coach to find it here.';
   static const courseSource = 'SportConnect beginner guide';
 
+  static const courseOverview = 'Sport overview';
+  static const courseLessons = 'Course lessons';
+  static const equipment = 'Equipment';
+  static const rulesScoring = 'Rules and scoring';
+  static const basics = 'Getting started';
+  static const practice = 'Practice activity';
+  static const practiceChecklist = 'Practice checklist';
+  static const practiceIntro =
+      'Complete the steps when you’re ready to mark the activity done.';
+  static const practiceSteps = [
+    'Choose a suitable space and equipment.',
+    'Try the drill at a comfortable pace.',
+    'Reflect on what you would practise next.',
+  ];
+  static const gameFormat = 'Game format';
+  static const done = 'Completed';
+  static const markComplete = 'Mark complete';
+  static const askAboutLesson = 'Ask AI about this';
+  static const quiz = 'Quick quiz';
+  static const checkAnswer = 'Check answer';
+  static const quizResults = 'Quiz results';
+  static const correctAnswer = 'Correct';
+  static const revisitAnswer = 'Try another attempt';
+  static const quizScore = 'Quiz score';
+  static const backToCourse = 'Back to course';
+  static const welcomeTitle = 'Ready to try a sport?';
+  static const welcomeDetail =
+      'Learn the basics at your pace, practise a drill and explore places to play.';
+  static const welcomeCardTitle = 'Build your first game';
+  static const welcomeCardDetail =
+      'Pick a city, a sport and a starting level. Lessons are available offline.';
+  static const getStarted = 'Get started';
+  static const next = 'Next';
+  static const back = 'Back';
+  static const firstSport = 'Pick your first sport';
+  static const firstSportDetail =
+      'You can browse all twelve courses after setup.';
+  static const playLevel = 'Your playing level';
+  static const recreational = 'Recreational';
+  static const returningPlayer = 'Returning player';
+  static const startLearning = 'Start learning';
+  static const noCourses = 'There are no courses to show.';
+  static const learningOffline =
+      'You can still open the bundled offline lessons.';
+  static const catalogError =
+      'Could not refresh the course catalogue. The bundled lessons are available.';
+
+  static String numbered(String number, String name) => '$number. $name';
+  static String explainLesson(String name) =>
+      'Can you explain this lesson on $name?';
+  static String stepNumber(String step, String total) => 'Step $step of $total';
+
   static String communityCentre(String city) => '$city Community Sports Centre';
   static String racketCentre(String city) => '$city Racket Centre';
   static String aquaticsCentre(String city) => '$city Aquatics Centre';

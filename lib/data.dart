@@ -26,7 +26,6 @@ class Sport {
     required this.name,
     required this.format,
     required this.icon,
-    required this.tint,
     required this.lessons,
     required this.quiz,
   });
@@ -35,7 +34,6 @@ class Sport {
   final String name;
   final String format;
   final IconData icon;
-  final Color tint;
   final List<Lesson> lessons;
   final Quiz quiz;
 }
@@ -46,7 +44,6 @@ const sports = [
     name: 'Football',
     format: 'Association football (soccer)',
     icon: Symbols.sports_soccer,
-    tint: Color(0xFFDCF2B9),
     lessons: [
       Lesson(
         'aim',
@@ -86,7 +83,6 @@ const sports = [
     name: 'Cricket',
     format: 'Beginner batting and fielding',
     icon: Symbols.sports_cricket,
-    tint: Color(0xFFF9E7B2),
     lessons: [
       Lesson(
         'aim',
@@ -126,7 +122,6 @@ const sports = [
     name: 'Badminton',
     format: 'Beginner singles',
     icon: Symbols.sports_tennis,
-    tint: Color(0xFFE9DEF9),
     lessons: [
       Lesson(
         'aim',
@@ -205,28 +200,4 @@ const regions = [
     'badminton',
     'cricket',
   ]),
-];
-
-class DemoCentre {
-  const DemoCentre(this.name, this.distanceKm, this.sessions, this.coach);
-
-  final String name;
-  final double distanceKm;
-  final String sessions;
-  final String coach;
-}
-
-List<DemoCentre> centresFor(Sport sport, Region region) => [
-  DemoCentre(
-    '${region.city} Community Sports Centre',
-    1.4,
-    'Group introductions and beginner practice',
-    'Coach Alex · ${sport.name} fundamentals',
-  ),
-  DemoCentre(
-    '${region.city} Sports Academy',
-    3.2,
-    'Small groups and individual sessions',
-    'Coach Sam · First-game preparation',
-  ),
 ];

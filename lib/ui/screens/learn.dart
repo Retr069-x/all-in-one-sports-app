@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../app_state.dart';
 import '../../data.dart';
+import '../../repositories.dart';
 import '../strings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/components.dart';
@@ -12,12 +13,14 @@ class LearnScreen extends StatefulWidget {
   const LearnScreen({
     super.key,
     required this.state,
+    required this.repository,
     required this.openCourse,
     required this.changeRegion,
     required this.askQuestion,
   });
 
   final AppState state;
+  final LearningRepository repository;
   final ValueChanged<Sport> openCourse;
   final VoidCallback changeRegion;
   final void Function(Sport, String) askQuestion;
@@ -28,6 +31,15 @@ class LearnScreen extends StatefulWidget {
 
 class _LearnScreenState extends State<LearnScreen> {
   final search = TextEditingController();
+  late Future<List<Sport>> courses = Future.sync(widget.repository.load);
+
+  @override
+  void didUpdateWidget(LearnScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.repository != widget.repository) {
+      courses = Future.sync(widget.repository.load);
+    }
+  }
 
   @override
   void dispose() {
@@ -36,20 +48,64 @@ class _LearnScreenState extends State<LearnScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => FutureBuilder<List<Sport>>(
+    future: courses,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return const ContentList(
+          children: [
+            SectionHeader(Copy.learnTitle, prominent: true),
+            StatusBanner(ContentState.loading),
+          ],
+        );
+      }
+      final catalogue = snapshot.data ?? sports;
+      if (catalogue.isEmpty) {
+        return const ContentList(
+          children: [
+            SectionHeader(Copy.learnTitle, prominent: true),
+            StatusBanner(ContentState.empty, detail: Copy.noCourses),
+          ],
+        );
+      }
+      final offline = snapshot.error is OfflineFailure;
+      return _content(
+        context,
+        catalogue,
+        snapshot.hasError
+            ? StatusBanner(
+                offline ? ContentState.offline : ContentState.error,
+                detail: offline ? Copy.learningOffline : Copy.catalogError,
+                onRetry: () => setState(
+                  () => courses = Future.sync(widget.repository.load),
+                ),
+              )
+            : null,
+      );
+    },
+  );
+
+  Widget _content(BuildContext context, List<Sport> catalogue, Widget? status) {
     final state = widget.state;
-    final featured = state.inProgress ?? sports.first;
+    final preferred = state.inProgress ?? state.starterSport;
+    final featured = catalogue.firstWhere(
+      (sport) => sport.id == preferred.id,
+      orElse: () => catalogue.first,
+    );
     final started = state.completed(featured).length;
     final region = state.region;
     final query = search.text.trim().toLowerCase();
     final numbers = NumberFormat.decimalPattern('en');
-    final matches = sports
+    final matches = catalogue
         .where(
           (sport) =>
               '${sport.name} ${sport.format}'.toLowerCase().contains(query),
         )
         .toList();
     final dates = DateFormat.yMMMd('en_US');
+    final ranking = region.ranking
+        .where((id) => catalogue.any((sport) => sport.id == id))
+        .toList();
     final dateRange =
         '${dates.format(DateTime(2026, 11, 1))} – ${dates.format(DateTime(2026, 11, 7))}';
 
@@ -67,7 +123,7 @@ class _LearnScreenState extends State<LearnScreen> {
               children: [
                 const Icon(Symbols.bolt, color: brand),
                 Flexible(
-                  child: Text(
+                  child: AppText(
                     Copy.appName,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
@@ -77,7 +133,7 @@ class _LearnScreenState extends State<LearnScreen> {
             OutlinedButton.icon(
               onPressed: widget.changeRegion,
               icon: const Icon(Symbols.location_on, size: 18),
-              label: Text(region.city),
+              label: AppText(region.city),
             ),
           ],
         ),
@@ -88,6 +144,7 @@ class _LearnScreenState extends State<LearnScreen> {
           prominent: true,
         ),
         const SizedBox(height: Space.x4),
+        if (status != null) ...[status, const SizedBox(height: Space.x4)],
         AppSearchField(controller: search, onChanged: (_) => setState(() {})),
         const SizedBox(height: Space.x4),
         if (query.isNotEmpty) ...[
@@ -134,7 +191,7 @@ class _LearnScreenState extends State<LearnScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: Space.x2,
               children: [
-                for (final sport in sports)
+                for (final sport in catalogue)
                   SizedBox(
                     width: 156,
                     child: SportTile(
@@ -170,7 +227,7 @@ class _LearnScreenState extends State<LearnScreen> {
                         OutlinedButton(
                           onPressed: () =>
                               widget.askQuestion(featured, question),
-                          child: Text(question),
+                          child: AppText(question),
                         ),
                     ],
                   ),
@@ -189,7 +246,7 @@ class _LearnScreenState extends State<LearnScreen> {
             child: DemoDataBadge(),
           ),
           const SizedBox(height: Space.x3),
-          for (final (index, id) in region.ranking.indexed)
+          for (final (index, id) in ranking.indexed)
             Padding(
               padding: const EdgeInsetsDirectional.only(bottom: Space.x2),
               child: _TrendingTile(
@@ -221,8 +278,8 @@ class _TrendingTile extends StatelessWidget {
       child: ListTile(
         onTap: () => openCourse(sport),
         minTileHeight: 48,
-        leading: Text(position),
-        title: Text(sport.name),
+        leading: AppText(position),
+        title: AppText(sport.name),
         trailing: const Icon(Symbols.chevron_right),
       ),
     );

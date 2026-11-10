@@ -6,7 +6,6 @@ const additionalSports = <Sport>[
     name: 'Basketball',
     format: 'Half-court fundamentals',
     icon: Symbols.sports_basketball,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -42,7 +41,6 @@ const additionalSports = <Sport>[
     name: 'Tennis',
     format: 'Beginner singles',
     icon: Symbols.sports_tennis,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -86,7 +84,6 @@ const additionalSports = <Sport>[
     name: 'Volleyball',
     format: 'Indoor team basics',
     icon: Symbols.sports_volleyball,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -126,7 +123,6 @@ const additionalSports = <Sport>[
     name: 'Table tennis',
     format: 'Singles rally practice',
     icon: Symbols.sports_tennis,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -166,7 +162,6 @@ const additionalSports = <Sport>[
     name: 'Swimming',
     format: 'Supervised pool fundamentals',
     icon: Symbols.pool,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -210,7 +205,6 @@ const additionalSports = <Sport>[
     name: 'Squash',
     format: 'Singles court basics',
     icon: Symbols.sports_tennis,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -254,7 +248,6 @@ const additionalSports = <Sport>[
     name: 'Baseball',
     format: 'Batting and fielding basics',
     icon: Symbols.sports_baseball,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -298,7 +291,6 @@ const additionalSports = <Sport>[
     name: 'Rugby union',
     format: 'Non-contact starter practice',
     icon: Symbols.sports_rugby,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
@@ -338,7 +330,6 @@ const additionalSports = <Sport>[
     name: 'Ice hockey',
     format: 'Supervised skating and puck basics',
     icon: Symbols.sports_hockey,
-    tint: Color(0xFFE8E7FC),
     lessons: [
       Lesson(
         'aim',
