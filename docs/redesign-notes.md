@@ -23,3 +23,7 @@ There was no Git repository in the workspace. A local baseline commit records th
 ## Verification workflow
 
 From the Flutter project directory, run `dart format lib test`, `flutter analyze`, `flutter test` and `flutter build apk --debug`. Use `flutter run` for an Android emulator or connected phone. The workspace's local Windows verification uses a temporary drive alias because a native Flutter build hook misquotes the existing workspace path with spaces.
+
+## Phase 1 design system
+
+Added Material 3 light and dark themes, twelve sport tokens with tested contrast, bundled variable fonts, and the shared UI components. Added `intl` for date and number formatting and `material_symbols_icons` for one consistent, tree-shaken icon set. The icon package is Apache-2.0. The unchanged Google Fonts binaries include their SIL OFL 1.1 notices. No runtime font requests are needed.
