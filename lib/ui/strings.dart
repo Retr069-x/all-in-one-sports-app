@@ -211,6 +211,8 @@ abstract final class Copy {
 
   static String trending(String country) => 'Trending in $country';
   static String lessons(String count) => '$count lessons';
+  static String sportCount(int count, String formatted) =>
+      count == 1 ? '$formatted sport' : '$formatted sports';
   static String courseInfo(String count) => '$beginner · ${lessons(count)}';
   static String completed(String done, String total) =>
       '$done of $total lessons complete';

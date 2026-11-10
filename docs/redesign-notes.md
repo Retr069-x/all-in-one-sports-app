@@ -61,3 +61,9 @@ Each phase passed Dart formatting, Flutter analysis, its available test suite an
 - Android, dependencies and fonts: `android/app/src/main/AndroidManifest.xml`, `pubspec.yaml`, `pubspec.lock`, and the four licensed font families and notices in `assets/fonts/`.
 - Verification: `test/app_test.dart`, `test/design_test.dart`, `test/flows_test.dart`, `test/states_test.dart`, `test/layout_test.dart`, and the four screen goldens under `test/goldens/`.
 - Documentation: `DESIGN.md`, `README.md` and `docs/redesign-notes.md`.
+
+## Dribbble reference pass
+
+The Learn home places its featured or in-progress course above the sport catalogue, with the action and progress together in a shorter card. Iron Pulse shows a progress card above its training library. Cafit shows a horizontal strip with the next item partly visible. SportConnect uses that cue for the catalogue and draws its own sport artwork from the current sport colours and symbols. [Iron Pulse](https://dribbble.com/shots/27675885-Iron-Pulse-Fitness-App-UX-UI-Design-Sports-Mobile-App-Design) · [Cafit](https://dribbble.com/shots/27683831-Cafit-Sports-Mobile-App-UI-Design)
+
+The course card and catalogue enter in sequence over 200 ms. Reduced motion shows the settled layout immediately. This pass touched `lib/ui/screens/learn.dart`, `lib/ui/widgets/learn_feature_card.dart`, `lib/ui/strings.dart`, `test/app_test.dart` and the Learn golden.

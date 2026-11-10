@@ -9,6 +9,43 @@ import 'package:sportconnect/ui/strings.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({'ui-onboarded': true}));
 
+  const featureEntrance = ValueKey('learn-feature-entrance');
+  const shelfEntrance = ValueKey('learn-shelf-entrance');
+
+  testWidgets('Learn reveals the featured course before the sport shelf', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      SportConnect(preferences: await SharedPreferences.getInstance()),
+    );
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 35));
+    final feature = tester.widget<FadeTransition>(find.byKey(featureEntrance));
+    final shelf = tester.widget<FadeTransition>(find.byKey(shelfEntrance));
+    expect(feature.opacity.value, greaterThan(shelf.opacity.value));
+    expect(feature.opacity.value, lessThan(1));
+    await tester.pumpAndSettle();
+    expect(feature.opacity.value, 1);
+    expect(shelf.opacity.value, 1);
+  });
+
+  testWidgets('Learn skips entry motion when reduced motion is on', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    await tester.pumpWidget(
+      SportConnect(preferences: await SharedPreferences.getInstance()),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(featureEntrance), findsNothing);
+    expect(find.byKey(shelfEntrance), findsNothing);
+    expect(find.text(Copy.startCourse), findsOneWidget);
+    expect(find.text(Copy.browseCourses), findsOneWidget);
+  });
+
   test('all eleven sample rankings refer to the twelve-sport catalogue', () {
     final ids = sports.map((sport) => sport.id).toSet();
     expect(ids, hasLength(12));

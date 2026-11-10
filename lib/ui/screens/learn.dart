@@ -8,6 +8,7 @@ import '../../repositories.dart';
 import '../strings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/components.dart';
+import '../widgets/learn_feature_card.dart';
 
 class LearnScreen extends StatefulWidget {
   const LearnScreen({
@@ -29,9 +30,15 @@ class LearnScreen extends StatefulWidget {
   State<LearnScreen> createState() => _LearnScreenState();
 }
 
-class _LearnScreenState extends State<LearnScreen> {
+class _LearnScreenState extends State<LearnScreen>
+    with SingleTickerProviderStateMixin {
   final search = TextEditingController();
   late Future<List<Sport>> courses = Future.sync(widget.repository.load);
+  late final entrance = AnimationController(
+    vsync: this,
+    duration: motionDuration,
+  );
+  bool entranceQueued = false;
 
   @override
   void didUpdateWidget(LearnScreen oldWidget) {
@@ -44,7 +51,38 @@ class _LearnScreenState extends State<LearnScreen> {
   @override
   void dispose() {
     search.dispose();
+    entrance.dispose();
     super.dispose();
+  }
+
+  void _startEntrance() {
+    if (entranceQueued) return;
+    entranceQueued = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (MediaQuery.disableAnimationsOf(context)) {
+        entrance.value = 1;
+      } else {
+        entrance.forward();
+      }
+    });
+  }
+
+  Widget _reveal(Widget child, {required Key key, required double start}) {
+    if (MediaQuery.disableAnimationsOf(context)) return child;
+    final progress = entrance.drive(
+      CurveTween(curve: Interval(start, 1, curve: Curves.easeOutCubic)),
+    );
+    return FadeTransition(
+      key: key,
+      opacity: progress.drive(Tween(begin: .6, end: 1.0)),
+      child: SlideTransition(
+        position: progress.drive(
+          Tween(begin: const Offset(0, .045), end: Offset.zero),
+        ),
+        child: child,
+      ),
+    );
   }
 
   @override
@@ -95,6 +133,7 @@ class _LearnScreenState extends State<LearnScreen> {
     final started = state.completed(featured).length;
     final region = state.region;
     final query = search.text.trim().toLowerCase();
+    if (query.isEmpty) _startEntrance();
     final numbers = NumberFormat.decimalPattern('en');
     final matches = catalogue
         .where(
@@ -163,51 +202,30 @@ class _LearnScreenState extends State<LearnScreen> {
               ),
             ),
         ] else ...[
-          CourseCard(
-            eyebrow: started > 0 ? Copy.continueLearning : Copy.featured,
-            title: featured.name,
-            detail: started > 0
-                ? Copy.completed(
-                    numbers.format(started),
-                    numbers.format(featured.lessons.length),
-                  )
-                : Copy.courseInfo(numbers.format(featured.lessons.length)),
-            action: started > 0 ? Copy.continueCourse : Copy.startCourse,
-            onTap: () => widget.openCourse(featured),
-            trailing: started > 0
-                ? ProgressRing(
-                    value: started / featured.lessons.length,
-                    label: Copy.progress,
-                    onDark: true,
-                  )
-                : SportBadge(id: featured.id, icon: featured.icon),
+          _reveal(
+            LearnFeatureCard(
+              sport: featured,
+              detail: started > 0
+                  ? Copy.completed(
+                      numbers.format(started),
+                      numbers.format(featured.lessons.length),
+                    )
+                  : Copy.courseInfo(numbers.format(featured.lessons.length)),
+              progress: started / featured.lessons.length,
+              onOpen: () => widget.openCourse(featured),
+            ),
+            key: const ValueKey('learn-feature-entrance'),
+            start: 0,
           ),
           const SizedBox(height: Space.x6),
-          const SectionHeader(Copy.browseCourses),
-          const SizedBox(height: Space.x3),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: Space.x2,
-              children: [
-                for (final sport in catalogue)
-                  SizedBox(
-                    width: 156,
-                    child: SportTile(
-                      id: sport.id,
-                      name: sport.name,
-                      icon: sport.icon,
-                      detail: Copy.courseInfo(
-                        numbers.format(sport.lessons.length),
-                      ),
-                      onTap: () => widget.openCourse(sport),
-                      compact: true,
-                      shared: true,
-                    ),
-                  ),
-              ],
+          _reveal(
+            _CourseShelf(
+              catalogue: catalogue,
+              numbers: numbers,
+              onOpen: widget.openCourse,
             ),
+            key: const ValueKey('learn-shelf-entrance'),
+            start: .25,
           ),
           const SizedBox(height: Space.x6),
           Card(
@@ -259,6 +277,75 @@ class _LearnScreenState extends State<LearnScreen> {
       ],
     );
   }
+}
+
+class _CourseShelf extends StatelessWidget {
+  const _CourseShelf({
+    required this.catalogue,
+    required this.numbers,
+    required this.onOpen,
+  });
+
+  final List<Sport> catalogue;
+  final NumberFormat numbers;
+  final ValueChanged<Sport> onOpen;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    spacing: Space.x3,
+    children: [
+      Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: Space.x3,
+        runSpacing: Space.x1,
+        children: [
+          const SectionHeader(Copy.browseCourses),
+          AppText(
+            Copy.sportCount(catalogue.length, numbers.format(catalogue.length)),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final largeText = MediaQuery.textScalerOf(context).scale(16) > 21;
+          final width =
+              (largeText
+                      ? (constraints.maxWidth * .68).clamp(160.0, 236.0)
+                      : (constraints.maxWidth * .43).clamp(120.0, 160.0))
+                  .toDouble();
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: Space.x2,
+              children: [
+                for (final sport in catalogue)
+                  SizedBox(
+                    width: width,
+                    child: SportTile(
+                      id: sport.id,
+                      name: sport.name,
+                      icon: sport.icon,
+                      detail: Copy.courseInfo(
+                        numbers.format(sport.lessons.length),
+                      ),
+                      onTap: () => onOpen(sport),
+                      compact: true,
+                      shared: true,
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    ],
+  );
 }
 
 class _TrendingTile extends StatelessWidget {
