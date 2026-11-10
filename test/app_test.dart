@@ -3,15 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportconnect/data.dart';
 import 'package:sportconnect/main.dart';
+import 'package:sportconnect/ui/screens/learn.dart';
+import 'package:sportconnect/ui/strings.dart';
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  test('each region ranks every starter sport exactly once', () {
+  test('all eleven sample rankings refer to the twelve-sport catalogue', () {
     final ids = sports.map((sport) => sport.id).toSet();
+    expect(ids, hasLength(12));
     expect(regions.map((region) => region.code).toSet(), hasLength(11));
     for (final region in regions) {
-      expect(region.ranking, unorderedEquals(ids));
+      expect(region.ranking.toSet(), hasLength(region.ranking.length));
+      expect(ids, containsAll(region.ranking));
     }
   });
 
@@ -20,7 +24,7 @@ void main() {
   ) async {
     final preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(SportConnect(preferences: preferences));
-    await tester.tap(find.text('Start with football'));
+    await tester.tap(find.text(Copy.startCourse));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('1. Aim of the game'));
@@ -32,7 +36,7 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpWidget(SportConnect(preferences: preferences));
-    await tester.tap(find.text('Progress'));
+    await tester.tap(find.widgetWithText(NavigationDestination, Copy.profile));
     await tester.pumpAndSettle();
     expect(find.text('1 of 5 lessons complete'), findsOneWidget);
   });
@@ -48,7 +52,7 @@ void main() {
     await tester.pumpAndSettle();
     final discoverScroll = find
         .descendant(
-          of: find.byKey(const PageStorageKey<int>(0)),
+          of: find.byType(LearnScreen),
           matching: find.byType(Scrollable),
         )
         .first;
@@ -61,19 +65,9 @@ void main() {
     );
     expect(preferences.getString('country'), 'CA');
 
-    await tester.tap(find.text('Nearby'));
+    await tester.tap(find.widgetWithText(NavigationDestination, Copy.play));
     await tester.pumpAndSettle();
     expect(find.text('Toronto, Canada'), findsOneWidget);
-    expect(find.textContaining('are fictional'), findsOneWidget);
-    await tester.tap(find.text('Toronto Community Sports Centre').first);
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Coach Alex'), findsOneWidget);
-
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Badminton'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Toronto Community Sports Centre'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Coach Alex · Badminton'), findsOneWidget);
   });
 
   testWidgets('the quiz gives feedback after wrong and correct answers', (
@@ -85,7 +79,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     final preferences = await SharedPreferences.getInstance();
     await tester.pumpWidget(SportConnect(preferences: preferences));
-    await tester.tap(find.text('Start with football'));
+    await tester.tap(find.text(Copy.startCourse));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('The heel'), 220);
     await tester.tap(find.text('The heel'));

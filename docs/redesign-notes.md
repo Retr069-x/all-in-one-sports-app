@@ -27,3 +27,7 @@ From the Flutter project directory, run `dart format lib test`, `flutter analyze
 ## Phase 1 design system
 
 Added Material 3 light and dark themes, twelve sport tokens with tested contrast, bundled variable fonts, and the shared UI components. Added `intl` for date and number formatting and `material_symbols_icons` for one consistent, tree-shaken icon set. The icon package is Apache-2.0. The unchanged Google Fonts binaries include their SIL OFL 1.1 notices. No runtime font requests are needed.
+
+## Phase 2 shell and Learn home
+
+Added the four destinations and applied the shared theme. Learn has region selection, local search, a featured or unfinished course, a horizontal catalogue, demo AI questions and dated sample rankings. All twelve sports have five offline lessons and a starter quiz. The original lesson IDs and progress keys still work. The demo ranking lists a sample top three per country, not a real measure of popularity.

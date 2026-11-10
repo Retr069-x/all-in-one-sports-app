@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
+part 'course_catalog.dart';
 
 class Lesson {
   const Lesson(this.id, this.title, this.body);
@@ -42,7 +45,7 @@ const sports = [
     id: 'football',
     name: 'Football',
     format: 'Association football (soccer)',
-    icon: Icons.sports_soccer,
+    icon: Symbols.sports_soccer,
     tint: Color(0xFFDCF2B9),
     lessons: [
       Lesson(
@@ -82,7 +85,7 @@ const sports = [
     id: 'cricket',
     name: 'Cricket',
     format: 'Beginner batting and fielding',
-    icon: Icons.sports_cricket,
+    icon: Symbols.sports_cricket,
     tint: Color(0xFFF9E7B2),
     lessons: [
       Lesson(
@@ -122,7 +125,7 @@ const sports = [
     id: 'badminton',
     name: 'Badminton',
     format: 'Beginner singles',
-    icon: Icons.sports_tennis,
+    icon: Symbols.sports_tennis,
     tint: Color(0xFFE9DEF9),
     lessons: [
       Lesson(
@@ -162,6 +165,7 @@ const sports = [
       'A serve goes into the service court diagonally opposite the server.',
     ),
   ),
+  ...additionalSports,
 ];
 
 class Region {
