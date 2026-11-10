@@ -31,3 +31,9 @@ Added Material 3 light and dark themes, twelve sport tokens with tested contrast
 ## Phase 2 shell and Learn home
 
 Added the four destinations and applied the shared theme. Learn has region selection, local search, a featured or unfinished course, a horizontal catalogue, demo AI questions and dated sample rankings. All twelve sports have five offline lessons and a starter quiz. The original lesson IDs and progress keys still work. The demo ranking lists a sample top three per country, not a real measure of popularity.
+
+## Phase 3 Ask AI, Play and Profile
+
+Added injectable AI, directory and location repository interfaces. The assistant retrieves excerpts from local lessons and links each supported answer to its lesson. It can ask for clarification, decline unsupported prompts, show loading and failures, and retry. Play has separate venue and coach views, a schematic demo map, distance and sport filters, a searchable area picker and venue and coach detail pages. Fictional listings are labelled at each entry point. Missing contact, fee, opening and verification data is shown as unavailable. Directions require a verified address. Reports are stored locally.
+
+The MIT-licensed `geolocator` plugin requests approximate foreground Android location only after the user selects Use my location. The app compares it to the eleven demo city centres locally within 150 km, then discards the coordinates. Permission denial, disabled services and lack of coverage leave manual search available. Profile includes local saved items, theme and text settings, RTL preview, language status, privacy and data-source information. [Android location package](https://pub.dev/packages/geolocator)

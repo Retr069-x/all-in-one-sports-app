@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show NumberFormat;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_state.dart';
 import 'data.dart';
+import 'repositories.dart';
 import 'screens.dart' as legacy;
+import 'ui/screens/ask.dart';
 import 'ui/screens/learn.dart';
+import 'ui/screens/play.dart';
+import 'ui/screens/profile.dart';
 import 'ui/strings.dart';
 import 'ui/theme/app_theme.dart';
 import 'ui/widgets/components.dart';
@@ -18,8 +21,17 @@ Future<void> main() async {
 }
 
 class SportConnect extends StatefulWidget {
-  const SportConnect({super.key, required this.preferences});
+  const SportConnect({
+    super.key,
+    required this.preferences,
+    this.ai = const MockAiRepository(),
+    this.directory = const MockDirectoryRepository(),
+    this.location = const DeviceLocationRepository(),
+  });
   final SharedPreferences preferences;
+  final AiRepository ai;
+  final DirectoryRepository directory;
+  final LocationRepository location;
 
   @override
   State<SportConnect> createState() => _SportConnectState();
@@ -55,14 +67,28 @@ class _SportConnectState extends State<SportConnect> {
           ),
         );
       },
-      home: Home(state: state),
+      home: Home(
+        state: state,
+        ai: widget.ai,
+        directory: widget.directory,
+        location: widget.location,
+      ),
     ),
   );
 }
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.state});
+  const Home({
+    super.key,
+    required this.state,
+    required this.ai,
+    required this.directory,
+    required this.location,
+  });
   final AppState state;
+  final AiRepository ai;
+  final DirectoryRepository directory;
+  final LocationRepository location;
 
   @override
   State<Home> createState() => _HomeState();
@@ -70,7 +96,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int tab = 0;
-  String? question;
+  AskSeed? seed;
 
   AppState get state => widget.state;
 
@@ -90,6 +116,10 @@ class _HomeState extends State<Home> {
   Future<void> changeRegion() async {
     final selected = await showRegionPicker(context, state.region);
     if (!mounted || selected == null) return;
+    await setRegion(selected);
+  }
+
+  Future<void> setRegion(Region selected) async {
     if (!await state.setRegion(selected) && mounted) {
       ScaffoldMessenger.of(
         context,
@@ -98,9 +128,44 @@ class _HomeState extends State<Home> {
   }
 
   void askQuestion(Sport sport, String value) => setState(() {
-    question = value;
+    seed = AskSeed(sport, value);
     tab = 1;
   });
+
+  void openLesson(Sport sport, Lesson lesson) {
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(title: Text(sport.name)),
+          body: ContentList(
+            children: [
+              SectionHeader(
+                lesson.title,
+                detail: sport.format,
+                prominent: true,
+              ),
+              const SizedBox(height: Space.x4),
+              Text(lesson.body),
+              const SizedBox(height: Space.x4),
+              const Text(Copy.courseSource),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void openVenue(Venue venue) => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (context) => ListingScreen.venue(state: state, venue: venue),
+    ),
+  );
+
+  void openCoach(Coach coach) => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (context) => ListingScreen.coach(state: state, coach: coach),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -108,39 +173,35 @@ class _HomeState extends State<Home> {
       child: IndexedStack(
         index: tab,
         children: [
-          LearnScreen(
-            state: state,
-            openCourse: openCourse,
+          HeroMode(
+            enabled: tab == 0,
+            child: LearnScreen(
+              state: state,
+              openCourse: openCourse,
+              changeRegion: changeRegion,
+              askQuestion: askQuestion,
+            ),
+          ),
+          AskScreen(repository: widget.ai, openLesson: openLesson, seed: seed),
+          PlayScreen(
+            region: state.region,
+            repository: widget.directory,
+            location: widget.location,
             changeRegion: changeRegion,
-            askQuestion: askQuestion,
+            useRegion: setRegion,
+            openVenue: openVenue,
+            openCoach: openCoach,
           ),
-          ContentList(
-            children: [
-              const SectionHeader(Copy.ask, prominent: true),
-              if (question case final value?) Text(value),
-              const SizedBox(height: Space.x4),
-              const StatusBanner(ContentState.offline, detail: Copy.offlineAi),
-            ],
+          ProfileScreen(
+            state: state,
+            repository: widget.directory,
+            location: widget.location,
+            changeRegion: changeRegion,
+            openCourse: openCourse,
+            openLesson: openLesson,
+            openVenue: openVenue,
+            openCoach: openCoach,
           ),
-          ContentList(
-            children: [
-              SectionHeader(
-                Copy.play,
-                detail: Copy.place(state.region.city, state.region.country),
-                prominent: true,
-              ),
-              const SizedBox(height: Space.x3),
-              const StatusBanner(
-                ContentState.offline,
-                detail: Copy.demoDirectory,
-              ),
-              OutlinedButton(
-                onPressed: changeRegion,
-                child: const Text(Copy.selectCountry),
-              ),
-            ],
-          ),
-          _ProgressPreview(state: state, openCourse: openCourse),
         ],
       ),
     ),
@@ -150,7 +211,10 @@ class _HomeState extends State<Home> {
         constraints: const BoxConstraints(maxWidth: contentWidth),
         child: NavigationBar(
           selectedIndex: tab,
-          onDestinationSelected: (value) => setState(() => tab = value),
+          onDestinationSelected: (value) {
+            FocusScope.of(context).unfocus();
+            setState(() => tab = value);
+          },
           destinations: const [
             NavigationDestination(
               icon: Icon(Symbols.school),
@@ -173,44 +237,4 @@ class _HomeState extends State<Home> {
       ),
     ),
   );
-}
-
-class _ProgressPreview extends StatelessWidget {
-  const _ProgressPreview({required this.state, required this.openCourse});
-  final AppState state;
-  final ValueChanged<Sport> openCourse;
-
-  @override
-  Widget build(BuildContext context) {
-    final numbers = NumberFormat.decimalPattern('en');
-    return ContentList(
-      children: [
-        const SectionHeader(
-          Copy.profile,
-          detail: Copy.progressLocal,
-          prominent: true,
-        ),
-        const SizedBox(height: Space.x4),
-        ProgressRing(
-          value: state.completedCount / state.totalLessons,
-          label: Copy.progress,
-        ),
-        const SizedBox(height: Space.x4),
-        if (state.completedCount == 0)
-          const StatusBanner(ContentState.empty, detail: Copy.progressEmpty),
-        for (final sport in sports)
-          if (state.completed(sport).isNotEmpty)
-            SportTile(
-              id: sport.id,
-              name: sport.name,
-              icon: sport.icon,
-              detail: Copy.completed(
-                numbers.format(state.completed(sport).length),
-                numbers.format(sport.lessons.length),
-              ),
-              onTap: () => openCourse(sport),
-            ),
-      ],
-    );
-  }
 }

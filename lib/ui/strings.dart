@@ -45,8 +45,117 @@ abstract final class Copy {
       'Complete a lesson to start tracking your progress.';
   static const demoDirectory =
       'Sample listings and distances for the selected city.';
-  static const offlineAi =
-      'The lesson assistant is available in demo mode in the next phase.';
+
+  static const askTitle = 'Ask the lesson assistant';
+  static const askPlaceholder = 'Your sports question';
+  static const send = 'Send question';
+  static const askEmpty = 'Choose a sport and try a question below.';
+  static const askNote =
+      'Learning guidance only. For injury concerns, speak to a qualified health professional. This assistant does not assess technique.';
+  static const aiClarification =
+      'Which part of the sport would you like to learn about? Try equipment, scoring or a starter drill.';
+  static const aiInsufficient =
+      'There isn’t enough lesson material to answer that question. Try a question about a topic in the course.';
+  static const aiSafetyReply =
+      'This assistant covers lesson material. For injury concerns, speak to a qualified health professional.';
+  static const aiError =
+      'The assistant couldn’t prepare a reply. Your lessons are still available.';
+  static const aiOffline =
+      'The assistant is unavailable. You can continue with the offline lessons.';
+  static const typing = 'Looking through the demo lessons…';
+  static const you = 'You';
+  static const clarification = 'Clarifying question';
+  static const insufficient = 'More material needed';
+  static const lessonAnswer = 'From the lessons';
+  static const demoDirectorySource = 'SportConnect demo directory';
+  static const playTitle = 'Find a place to play';
+  static const venues = 'Venues';
+  static const coaches = 'Coaches';
+  static const map = 'Map';
+  static const list = 'List';
+  static const searchArea = 'Search an area';
+  static const useLocation = 'Use my location';
+  static const selectSport = 'Choose a sport';
+  static const allSports = 'All sports';
+  static const distance = 'Distance';
+  static const anyDistance = 'Any distance';
+  static const noDirectory =
+      'No demo listings match these filters. Try a different sport, city or distance.';
+  static const directoryError =
+      'Could not load the directory. You can still choose a different area.';
+  static const directoryOffline =
+      'The directory is unavailable. The offline lessons are still available.';
+  static const locating = 'Looking for a supported demo city.';
+  static const locationDenied =
+      'Location permission was declined. Search for a city to keep browsing.';
+  static const locationDisabled =
+      'Location is switched off. Search for a city or enable location in device settings.';
+  static const locationOutside =
+      'No supported demo city is nearby. Choose a city manually.';
+  static const locationUnavailable =
+      'Could not get an approximate location. Search for a city instead.';
+  static const areaMap = 'Demo area map';
+  static const mapNote =
+      'Pin placement is illustrative and cannot be used for navigation.';
+  static const openingHours = 'Local opening hours';
+  static const lastChecked = 'Last checked';
+  static const address = 'Address';
+  static const directions = 'Directions';
+  static const directionsDemo =
+      'Demo venues have no verified street address. Directions are available once a real listing is connected.';
+  static const report = 'Report incorrect info';
+  static const reportPrompt = 'What should be corrected?';
+  static const reportNote = 'This demo keeps your report on this device.';
+  static const reportSaved = 'Report saved on this device.';
+  static const save = 'Save';
+  static const saved = 'Saved';
+  static const removeSaved = 'Remove from saved';
+  static const cancel = 'Cancel';
+  static const close = 'Close';
+  static const sport = 'Sport';
+  static const area = 'Area';
+  static const languages = 'Languages';
+  static const experience = 'Experience';
+  static const fee = 'Fee basis';
+  static const contact = 'Permitted contact details';
+  static const savedLessons = 'Lessons';
+  static const settings = 'Settings';
+  static const language = 'Language';
+  static const english = 'English';
+  static const languagesPlanned =
+      'Urdu, Arabic, French, Spanish and Hindi are planned.';
+  static const rtlPreview = 'Right-to-left preview';
+  static const rtlHelp =
+      'Preview a right-to-left layout with the English content.';
+  static const largerText = 'Larger app text';
+  static const largerHelp = 'Use at least 150% text in the app.';
+  static const appearance = 'Appearance';
+  static const useSystem = 'Device setting';
+  static const lightTheme = 'Light';
+  static const darkTheme = 'Dark';
+  static const locationPermission = 'Location permission';
+  static const locationPrivacy =
+      'Approximate location is used only when you ask for it to match a demo city. Coordinates are neither saved nor sent.';
+  static const openSettings = 'Open device settings';
+  static const privacy = 'Privacy and about';
+  static const privacyDetail =
+      'Progress, saved items, preferences and demo reports are stored on this device. Chat replies and listings come from local demo material.';
+  static const dataSources = 'Data sources';
+  static const dataSourcesDetail =
+      'SportConnect course guides, sample country rankings and a fictional demo directory.';
+  static const savedEmpty = 'Save a lesson, venue or coach to find it here.';
+  static const courseSource = 'SportConnect beginner guide';
+
+  static String communityCentre(String city) => '$city Community Sports Centre';
+  static String racketCentre(String city) => '$city Racket Centre';
+  static String aquaticsCentre(String city) => '$city Aquatics Centre';
+  static String iceRink(String city) => '$city Ice Rink';
+  static String sampleCoach(int index) => 'Sample coach $index';
+  static String kilometres(String amount) => '$amount km';
+  static String demoDistance(String amount) =>
+      'Approx. ${kilometres(amount)} · Sample distance';
+  static String maxDistance(String amount) => 'Within ${kilometres(amount)}';
+  static String field(String name, String value) => '$name · $value';
 
   static String trending(String country) => 'Trending in $country';
   static String lessons(String count) => '$count lessons';

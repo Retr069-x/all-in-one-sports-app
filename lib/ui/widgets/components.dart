@@ -6,15 +6,17 @@ import '../strings.dart';
 import '../theme/app_theme.dart';
 
 class ContentList extends StatelessWidget {
-  const ContentList({super.key, required this.children});
+  const ContentList({super.key, required this.children, this.controller});
 
   final List<Widget> children;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) => Center(
     child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: contentWidth),
       child: ListView(
+        controller: controller,
         padding: const EdgeInsetsDirectional.fromSTEB(
           Space.x4,
           Space.x4,

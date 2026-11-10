@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  geolocator: ^14.1.1
   intl: ^0.20.3
   material_symbols_icons: ^4.2960.0
   shared_preferences: ^2.5.3
